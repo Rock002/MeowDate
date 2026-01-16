@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Data
 @Table(name = "users")
@@ -36,6 +38,9 @@ public class User {
     @JoinColumn(name = "id")
     private UserProfile userProfile;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Photo> photos;
+
     public User() {}
 
     public String getUsername() {
@@ -44,6 +49,10 @@ public class User {
 
     public UserProfile getUserProfile() {
         return userProfile;
+    }
+
+    public List<Photo> getPhotos() {
+        return photos;
     }
 
     public String getEmail() {
@@ -88,5 +97,9 @@ public class User {
 
     public void setUserProfile(UserProfile userProfile) {
         this.userProfile = userProfile;
+    }
+
+    public void setPhotos(List<Photo> photos) {
+        this.photos = photos;
     }
 }
