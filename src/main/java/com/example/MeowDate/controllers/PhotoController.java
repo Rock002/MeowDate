@@ -43,25 +43,18 @@ public class PhotoController {
         String username = authentication.getName();
         User user = userService.findByUsername(username);
 
-        String base64first = Base64.getEncoder().encodeToString(firstFile.getBytes());
-        String base64second = Base64.getEncoder().encodeToString(secondFile.getBytes());
-        String base64third = Base64.getEncoder().encodeToString(thirdFile.getBytes());
-
         Photo firstPhoto = new Photo(
                 firstFile.getOriginalFilename(),
-                "data:image/jpeg;base64," + base64first,
                 true,
                 firstFile.getBytes()
         );
         Photo secondPhoto = new Photo(
                 secondFile.getOriginalFilename(),
-                "data:image/jpeg;base64," + base64second,
                 false,
                 secondFile.getBytes()
         );
         Photo thirdPhoto = new Photo(
                 thirdFile.getOriginalFilename(),
-                "data:image/jpeg;base64," + base64third,
                 false,
                 thirdFile.getBytes()
         );
@@ -79,6 +72,6 @@ public class PhotoController {
 
         photoService.savePhotos(photoList);
 
-        return "redirect:/main";
+        return "redirect:/profile";
     }
 }

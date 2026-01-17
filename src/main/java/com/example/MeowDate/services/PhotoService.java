@@ -2,7 +2,6 @@ package com.example.MeowDate.services;
 
 import com.example.MeowDate.models.Photo;
 import com.example.MeowDate.repository.PhotoRepository;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

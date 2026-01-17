@@ -15,9 +15,6 @@ public class Photo {
     @Column(name = "originFileName")
     private String originFileName;
 
-    @Column(name = "shortFileName", columnDefinition = "TEXT")
-    private String shortFileName;
-
     @Column(name = "isGeneralPhoto")
     private boolean isGeneralPhoto;
 
@@ -33,9 +30,8 @@ public class Photo {
     public Photo() {
     }
 
-    public Photo(String originFileName, String shortFileName, boolean isGeneralPhoto, byte[] bytes) {
+    public Photo(String originFileName, boolean isGeneralPhoto, byte[] bytes) {
         this.originFileName = originFileName;
-        this.shortFileName = shortFileName;
         this.isGeneralPhoto = isGeneralPhoto;
         this.bytes = bytes;
     }
@@ -48,10 +44,6 @@ public class Photo {
         return id;
     }
 
-    public String getShortFileName() {
-        return shortFileName;
-    }
-
     public boolean isGeneralPhoto() {
         return isGeneralPhoto;
     }
@@ -62,10 +54,6 @@ public class Photo {
 
     public void setOriginFileName(String originFileName) {
         this.originFileName = originFileName;
-    }
-
-    public void setShortFileName(String shortFileName) {
-        this.shortFileName = shortFileName;
     }
 
     public void setGeneralPhoto(boolean generalPhoto) {
