@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <!-- Этот файл может содержать только фрагменты -->
+</head>
+<body>
+<!-- Фрагмент навигационной панели -->
+<div th:fragment="navbar">
+  <nav class="navbar">
+    <div class="nav-container">
+      <a th:href="@{/main}" class="nav-logo">MeowDate</a>
+
+      <div class="nav-menu">
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a th:href="@{/main}" class="nav-link" th:classappend="${#httpServletRequest.requestURI == '/main' ? 'active' : ''}">
+              Анкеты
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/likes}" class="nav-link" th:classappend="${#httpServletRequest.requestURI.startsWith('/likes') ? 'active' : ''}">
+              Лайки
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/matches}" class="nav-link" th:classappend="${#httpServletRequest.requestURI.startsWith('/matches') ? 'active' : ''}">
+              Мэтчи
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/chats}" class="nav-link" th:classappend="${#httpServletRequest.requestURI.startsWith('/chats') ? 'active' : ''}">
+              Чаты
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/profile}" class="nav-link" th:classappend="${#httpServletRequest.requestURI == '/profile' ? 'active' : ''}">
+              Профиль
+            </a>
+          </li>
+        </ul>
+
+        <!-- Выход из системы -->
+        <form th:action="@{/logout}" method="post" class="logout-form">
+          <button type="submit" class="logout-btn">Выйти</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+</div>
+</body>
+</html>

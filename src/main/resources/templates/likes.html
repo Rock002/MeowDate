@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/base}">
+<head>
+  <title>Лайки</title>
+</head>
+<body>
+<th:block layout:fragment="content">
+  <div class="text-center py-5">
+    <div style="font-size: 5rem;">❤️</div>
+    <h1 class="mt-4">Страница "Лайки" в разработке</h1>
+    <p class="lead text-muted">Здесь будут отображаться люди, которым вы понравились</p>
+    <a th:href="@{/main}" class="btn btn-primary mt-3">← На главную</a>
+  </div>
+</th:block>
+</body>
+</html>

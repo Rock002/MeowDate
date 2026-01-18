@@ -30,4 +30,19 @@ public class MainController {
 
         return "main";
     }
+
+    @GetMapping("/likes")
+    public String likesPage() {
+        return "likes";
+    }
+
+    @GetMapping("/matches")
+    public String matchesPage() {
+        return "matches";
+    }
+
+    @GetMapping("/chats")
+    public String chatsPage() {
+        return "chats";
+    }
 }

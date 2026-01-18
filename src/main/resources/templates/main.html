@@ -1,17 +1,155 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/base}">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Главная страница</title>
+
+    <th:block layout:fragment="styles">
+        <style>
+            .hero-section {
+                text-align: center;
+                padding: 4rem 0;
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                border-radius: 10px;
+                margin-bottom: 3rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+                color: #333;
+                margin-bottom: 1rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+                color: #666;
+                margin-bottom: 2rem;
+            }
+
+            .features {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 2rem;
+                margin-top: 3rem;
+            }
+
+            .feature-card {
+                background: white;
+                padding: 2rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                text-align: center;
+                transition: transform 0.3s;
+            }
+
+            .feature-card:hover {
+                transform: translateY(-5px);
+            }
+
+            .feature-icon {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+                color: #667eea;
+            }
+
+            .action-buttons {
+                display: flex;
+                gap: 1rem;
+                justify-content: center;
+                margin-top: 2rem;
+                flex-wrap: wrap;
+            }
+        </style>
+    </th:block>
 </head>
 <body>
-    main
-    <form action="/photos/download" method="get">
-        <input type="submit" value="загрузить новые фото">
-    </form>
-    <br>
-    <form action="/profile" method="get">
-        <input type="submit" value="Профиль">
-    </form>
+<th:block layout:fragment="content">
+    <!-- Герой-секция -->
+    <div class="hero-section">
+        <h1 class="hero-title">Добро пожаловать в MeowDate! 🐱</h1>
+        <p class="hero-subtitle">Найди свою идеальную пару среди милых котиков</p>
+
+        <div class="action-buttons">
+            <a th:href="@{/profile}" class="btn btn-primary btn-lg">Мой профиль</a>
+            <a th:href="@{/photos/download}" class="btn btn-outline-primary btn-lg">Загрузить фото</a>
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-outline-danger btn-lg">Выйти</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Особенности -->
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">❤️</div>
+            <h3>Лайки</h3>
+            <p>Смотрите, кто вас лайкнул, и отвечайте взаимностью</p>
+            <a th:href="@{/likes}" class="btn btn-outline-primary">Перейти</a>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🤝</div>
+            <h3>Мэтчи</h3>
+            <p>Ваши взаимные симпатии и совпадения</p>
+            <a th:href="@{/matches}" class="btn btn-outline-primary">Перейти</a>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">💬</div>
+            <h3>Чаты</h3>
+            <p>Общайтесь с вашими мэтчами в реальном времени</p>
+            <a th:href="@{/chats}" class="btn btn-outline-primary">Перейти</a>
+        </div>
+    </div>
+
+    <!-- Быстрые действия -->
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Быстрые действия</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a th:href="@{/photos/download}" class="btn btn-primary">
+                            📸 Загрузить новые фотографии
+                        </a>
+                        <a th:href="@{/profile}" class="btn btn-secondary">
+                            👤 Редактировать профиль
+                        </a>
+                        <a th:href="@{/profile}" class="btn btn-info">
+                            ⚙️ Настройки
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Статистика</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Ваши фотографии
+                            <span class="badge bg-primary rounded-pill" th:text="${photos != null ? photos.size() : 0}">0</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Полученные лайки
+                            <span class="badge bg-success rounded-pill">0</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Ваши мэтчи
+                            <span class="badge bg-warning rounded-pill">0</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
 </body>
 </html>

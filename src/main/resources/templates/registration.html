@@ -1,16 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>registration</title>
+    <title>Регистрация - MeowDate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .register-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .register-body {
+            padding: 2rem;
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 0.75rem;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-text {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+        }
+
+        .requirements {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: -0.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
 </head>
 <body>
-    <form action="/postregistration" method="post">
-        <input type="text" name="username" required><br>
-        <input type="password" name="password" required><br>
-<!--        <input type="text" name="sex" required><br>-->
-<!--        <input type="date" name="dateOfBirth" required><br>-->
-        <input type="submit" value="Зарегестрироваться">
-    </form>
+<div class="register-container">
+    <div class="register-header">
+        <div class="logo">🐱 MeowDate</div>
+        <div class="welcome-text">Присоединяйся к нашему сообществу</div>
+    </div>
+
+    <div class="register-body">
+        <form action="/postregistration" method="post">
+            <div class="mb-3">
+                <input type="text"
+                       class="form-control"
+                       name="username"
+                       placeholder="Имя пользователя"
+                       required>
+                <div class="requirements">
+                    Минимум 3 символа, только буквы и цифры
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <input type="email"
+                       class="form-control"
+                       name="email"
+                       placeholder="Email"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <input type="password"
+                       class="form-control"
+                       name="password"
+                       placeholder="Пароль"
+                       required>
+                <div class="requirements">
+                    Минимум 6 символов
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-register">Зарегистрироваться</button>
+
+            <div class="login-link">
+                Уже есть аккаунт? <a href="/login">Войти</a>
+            </div>
+        </form>
+    </div>
+</div>
 </body>
 </html>

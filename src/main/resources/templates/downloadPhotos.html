@@ -1,15 +1,272 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/base}">
 <head>
-    <meta charset="UTF-8">
-    <title>Download</title>
+    <title>Загрузка фотографий</title>
+
+    <th:block layout:fragment="styles">
+        <style>
+            .upload-container {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 2rem;
+                background: white;
+                border-radius: 10px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            }
+
+            .upload-area {
+                border: 2px dashed #667eea;
+                border-radius: 10px;
+                padding: 3rem;
+                text-align: center;
+                margin-bottom: 2rem;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .upload-area:hover {
+                background-color: rgba(102, 126, 234, 0.05);
+            }
+
+            .upload-icon {
+                font-size: 3rem;
+                color: #667eea;
+                margin-bottom: 1rem;
+            }
+
+            .file-list {
+                margin-top: 1rem;
+            }
+
+            .file-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.5rem;
+                background: #f8f9fa;
+                border-radius: 5px;
+                margin-bottom: 0.5rem;
+            }
+
+            .file-name {
+                flex-grow: 1;
+                margin: 0 1rem;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .preview-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+                margin-top: 2rem;
+            }
+
+            .preview-item {
+                width: 150px;
+                height: 150px;
+                border-radius: 8px;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .preview-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .remove-btn {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                background: rgba(255, 71, 87, 0.9);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 25px;
+                height: 25px;
+                cursor: pointer;
+            }
+
+            .instructions {
+                background: #e3f2fd;
+                border-left: 4px solid #2196f3;
+                padding: 1rem;
+                margin-bottom: 2rem;
+                border-radius: 4px;
+            }
+        </style>
+    </th:block>
 </head>
 <body>
-    <form action="/photos/postDownload" method="post" enctype="multipart/form-data">
-      <input type="file" name="firstPhoto" required><br>
-      <input type="file" name="secondPhoto" required><br>
-      <input type="file" name="thirdPhoto" required><br>
-      <input type="submit" value="Загрузить !">
-    </form>
+<th:block layout:fragment="content">
+    <div class="upload-container">
+        <h1 class="text-center mb-4">📸 Загрузка фотографий</h1>
+
+        <div class="instructions">
+            <h5>📋 Инструкция:</h5>
+            <ul class="mb-0">
+                <li>Первая фотография станет вашей главной (аватаркой)</li>
+                <li>Рекомендуемый размер: не менее 500x500 пикселей</li>
+                <li>Поддерживаемые форматы: JPG, PNG, GIF</li>
+                <li>Максимальный размер файла: 5MB</li>
+            </ul>
+        </div>
+
+        <form action="/photos/postDownload" method="post" enctype="multipart/form-data" id="uploadForm">
+            <!-- Файл 1 (главная) -->
+            <div class="mb-4">
+                <label class="form-label fw-bold">
+                    1. Главная фотография (аватар) *
+                    <span class="badge bg-primary ms-2">Обязательно</span>
+                </label>
+                <div class="upload-area" onclick="document.getElementById('firstPhoto').click()">
+                    <div class="upload-icon">📷</div>
+                    <p>Нажмите или перетащите файл сюда</p>
+                    <small class="text-muted">Первая фотография будет отображаться как ваша главная</small>
+                </div>
+                <input type="file" class="form-control d-none" id="firstPhoto" name="firstPhoto"
+                       accept="image/*" required onchange="previewFile(this, 0)">
+                <div class="file-list" id="fileList1"></div>
+            </div>
+
+            <!-- Файл 2 -->
+            <div class="mb-4">
+                <label class="form-label fw-bold">
+                    2. Вторая фотография
+                    <span class="badge bg-secondary ms-2">По желанию</span>
+                </label>
+                <div class="upload-area" onclick="document.getElementById('secondPhoto').click()">
+                    <div class="upload-icon">🖼️</div>
+                    <p>Нажмите или перетащите файл сюда</p>
+                </div>
+                <input type="file" class="form-control d-none" id="secondPhoto" name="secondPhoto"
+                       accept="image/*" onchange="previewFile(this, 1)">
+                <div class="file-list" id="fileList2"></div>
+            </div>
+
+            <!-- Файл 3 -->
+            <div class="mb-4">
+                <label class="form-label fw-bold">
+                    3. Третья фотография
+                    <span class="badge bg-secondary ms-2">По желанию</span>
+                </label>
+                <div class="upload-area" onclick="document.getElementById('thirdPhoto').click()">
+                    <div class="upload-icon">🎨</div>
+                    <p>Нажмите или перетащите файл сюда</p>
+                </div>
+                <input type="file" class="form-control d-none" id="thirdPhoto" name="thirdPhoto"
+                       accept="image/*" onchange="previewFile(this, 2)">
+                <div class="file-list" id="fileList3"></div>
+            </div>
+
+            <!-- Превью -->
+            <div class="preview-container" id="previewContainer"></div>
+
+            <!-- Кнопки -->
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    📤 Загрузить фотографии
+                </button>
+                <a th:href="@{/profile}" class="btn btn-outline-secondary">
+                    ← Назад в профиль
+                </a>
+            </div>
+        </form>
+    </div>
+</th:block>
+
+<th:block layout:fragment="scripts">
+    <script>
+        const previews = [null, null, null];
+
+        function previewFile(input, index) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previews[index] = e.target.result;
+                updatePreview(index, file.name);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updatePreview(index, fileName) {
+            const fileList = document.getElementById(`fileList${index + 1}`);
+            fileList.innerHTML = `
+                <div class="file-item">
+                    <span>📄</span>
+                    <span class="file-name">${fileName}</span>
+                    <button type="button" class="btn btn-sm btn-outline-danger"
+                            onclick="removeFile(${index})">✕</button>
+                </div>
+            `;
+
+            renderPreviews();
+        }
+
+        function removeFile(index) {
+            const input = document.getElementById([`firstPhoto`, `secondPhoto`, `thirdPhoto`][index]);
+            input.value = '';
+            previews[index] = null;
+
+            const fileList = document.getElementById(`fileList${index + 1}`);
+            fileList.innerHTML = '';
+
+            renderPreviews();
+        }
+
+        function renderPreviews() {
+            const container = document.getElementById('previewContainer');
+            container.innerHTML = '';
+
+            previews.forEach((preview, index) => {
+                if (preview) {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
+                    previewItem.innerHTML = `
+                        <img src="${preview}" alt="Preview ${index + 1}">
+                        <button type="button" class="remove-btn" onclick="removeFile(${index})">✕</button>
+                    `;
+                    container.appendChild(previewItem);
+                }
+            });
+        }
+
+        // Drag and drop
+        document.querySelectorAll('.upload-area').forEach(area => {
+            area.addEventListener('dragover', e => {
+                e.preventDefault();
+                area.style.backgroundColor = 'rgba(102, 126, 234, 0.1)';
+            });
+
+            area.addEventListener('dragleave', () => {
+                area.style.backgroundColor = '';
+            });
+
+            area.addEventListener('drop', e => {
+                e.preventDefault();
+                area.style.backgroundColor = '';
+
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const input = area.nextElementSibling;
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    input.files = dataTransfer.files;
+
+                    // Определяем индекс
+                    const index = Array.from(document.querySelectorAll('.upload-area')).indexOf(area);
+                    previewFile(input, index);
+                }
+            });
+        });
+    </script>
+</th:block>
 </body>
 </html>
