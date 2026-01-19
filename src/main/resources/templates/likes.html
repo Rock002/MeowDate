@@ -4,20 +4,154 @@
       layout:decorate="~{layouts/base}">
 <head>
   <title>Лайки</title>
+
+  <th:block layout:fragment="styles">
+    <style>
+      .page-title {
+          margin-bottom: 20px;
+          font-size: 24px;
+      }
+
+      .likes-list {
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+      }
+
+      .like-item {
+          background: white;
+          border: 1px solid #e0e0e0;
+          border-radius: 8px;
+          padding: 15px;
+          display: flex;
+          align-items: center;
+          gap: 15px;
+      }
+
+      .like-avatar {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          background: #f5f5f5;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 24px;
+      }
+
+      .like-info {
+          flex: 1;
+      }
+
+      .like-username {
+          font-weight: 500;
+          margin-bottom: 5px;
+      }
+
+      .like-date {
+          color: #666;
+          font-size: 14px;
+      }
+
+      .like-actions {
+          display: flex;
+          gap: 10px;
+      }
+
+      .action-btn {
+          padding: 8px 20px;
+          border: 1px solid #ddd;
+          background: white;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 14px;
+      }
+
+      .like-back-btn {
+          color: #e91e63;
+          border-color: #e91e63;
+      }
+
+      .like-back-btn:hover {
+          background: #e91e63;
+          color: white;
+      }
+
+      .dislike-back-btn:hover {
+          background: #f5f5f5;
+      }
+
+      .empty-state {
+          text-align: center;
+          padding: 60px 20px;
+          color: #666;
+      }
+
+      .empty-icon {
+          font-size: 48px;
+          margin-bottom: 20px;
+          opacity: 0.3;
+      }
+    </style>
+  </th:block>
 </head>
 <body>
 <th:block layout:fragment="content">
-  <div class="text-center py-5">
-    <div style="font-size: 5rem;">❤️</div>
-    <h1 class="mt-4">Страница "Лайки" в разработке</h1>
-    <p class="lead text-muted">Здесь будут отображаться люди, которым вы понравились</p>
-    <a th:href="@{/}" class="btn btn-primary mt-3">← На главную</a>
+  <h1 class="page-title">Лайки</h1>
+
+  <div th:if="${likes != null && !likes.isEmpty()}">
+    <div class="likes-list">
+      <div class="like-item" th:each="like : ${likes}">
+        <div class="like-avatar">
+          👤
+        </div>
+        <div class="like-info">
+          <div class="like-username" th:text="${like.sender.username}"></div>
+          <div class="like-date" th:text="${like.createdAt}"></div>
+        </div>
+        <div class="like-actions">
+          <button class="action-btn like-back-btn"
+                  th:onclick="'likeBack(' + ${like.sender.id} + ')'">
+            ❤️ Ответить
+          </button>
+          <button class="action-btn dislike-back-btn"
+                  th:onclick="'ignoreLike(' + ${like.id} + ')'">
+            ✕ Игнорировать
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="likes" th:each="like, iterStat : ${likes}">
-    <p th:text="${like.sender}"></p>
-    <p th:text="${like.receiver}"></p>
+  <div th:if="${likes == null || likes.isEmpty()}" class="empty-state">
+    <div class="empty-icon">❤️</div>
+    <h3>Пока нет лайков</h3>
+    <p>Ваши лайки появятся здесь, когда кто-то проявит к вам интерес</p>
   </div>
+</th:block>
+
+<th:block layout:fragment="scripts">
+  <script>
+    function likeBack(userId) {
+        fetch('/api/like/' + userId, {
+            method: 'POST'
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            }
+        });
+    }
+
+    function ignoreLike(likeId) {
+        fetch('/api/like/' + likeId + '/ignore', {
+            method: 'POST'
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            }
+        });
+    }
+  </script>
 </th:block>
 </body>
 </html>

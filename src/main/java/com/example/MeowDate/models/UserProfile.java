@@ -19,14 +19,14 @@ public class UserProfile {
     @Column(name = "firstName")
     private String firstName;
 
-    @Column(name = "dateOfBirth")
-    private LocalDate dateOfBirth;
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
 
     @Column(name = "sex")
     private char sex;
 
-    @Column(name = "coordinates")
-    private double[] coordinates;
+    @Column(name = "location")
+    private String location;
 
     @Column(name = "info")
     private String info;
@@ -37,11 +37,11 @@ public class UserProfile {
 
     public UserProfile() {}
 
-    public UserProfile(String firstName, LocalDate dateOfBirth, char sex, @NotNull double[] coordinates, String info, User user) {
+    public UserProfile(String firstName, LocalDate birthDate, char sex, String location, String info, User user) {
         this.firstName = firstName;
-        this.dateOfBirth = dateOfBirth;
+        this.birthDate = birthDate;
         this.sex = sex;
-        this.coordinates = coordinates;
+        this.location = location;
         this.info = info;
         this.user = user;
     }
@@ -54,12 +54,12 @@ public class UserProfile {
         return firstName;
     }
 
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
+    public LocalDate getBirthDate() {
+        return birthDate;
     }
 
-    public double[] getCoordinates() {
-        return coordinates;
+    public String getLocation() {
+        return location;
     }
 
     public User getUser() {
@@ -78,12 +78,12 @@ public class UserProfile {
         this.firstName = firstName;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 
-    public void setCoordinates(double[] coordinates) {
-        this.coordinates = coordinates;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public void setUser(User user) {

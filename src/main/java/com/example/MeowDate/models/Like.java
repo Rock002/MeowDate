@@ -14,10 +14,12 @@ public class Like {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "sender")
+    @ManyToOne
+    @JoinColumn(name = "sender_id")
     private User sender;
 
-    @Column(name = "receiver")
+    @ManyToOne
+    @JoinColumn(name = "receiver_id")
     private User receiver;
 
     @Column(name = "dateOfLike")

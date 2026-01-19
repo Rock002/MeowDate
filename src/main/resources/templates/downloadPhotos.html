@@ -8,96 +8,97 @@
     <th:block layout:fragment="styles">
         <style>
             .upload-container {
-                max-width: 600px;
+                max-width: 500px;
                 margin: 0 auto;
-                padding: 2rem;
-                background: white;
-                border-radius: 10px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            }
+
+            .upload-title {
+                margin-bottom: 30px;
+                font-size: 24px;
+            }
+
+            .upload-instructions {
+                background: #f5f5f5;
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                font-size: 14px;
+                color: #666;
+            }
+
+            .upload-instructions ul {
+                margin: 10px 0 0 20px;
+            }
+
+            .upload-instructions li {
+                margin-bottom: 5px;
             }
 
             .upload-area {
-                border: 2px dashed #667eea;
-                border-radius: 10px;
-                padding: 3rem;
+                border: 2px dashed #ddd;
+                border-radius: 8px;
+                padding: 40px 20px;
                 text-align: center;
-                margin-bottom: 2rem;
+                margin-bottom: 20px;
                 cursor: pointer;
-                transition: all 0.3s;
+                transition: border-color 0.2s;
             }
 
             .upload-area:hover {
-                background-color: rgba(102, 126, 234, 0.05);
+                border-color: #999;
             }
 
             .upload-icon {
-                font-size: 3rem;
-                color: #667eea;
-                margin-bottom: 1rem;
+                font-size: 32px;
+                margin-bottom: 10px;
+                color: #666;
+            }
+
+            .file-input {
+                display: none;
             }
 
             .file-list {
-                margin-top: 1rem;
+                margin-top: 15px;
             }
 
             .file-item {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 0.5rem;
-                background: #f8f9fa;
-                border-radius: 5px;
-                margin-bottom: 0.5rem;
+                padding: 10px;
+                background: white;
+                border: 1px solid #e0e0e0;
+                border-radius: 4px;
+                margin-bottom: 10px;
             }
 
-            .file-name {
-                flex-grow: 1;
-                margin: 0 1rem;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-
-            .preview-container {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 1rem;
-                margin-top: 2rem;
-            }
-
-            .preview-item {
-                width: 150px;
-                height: 150px;
-                border-radius: 8px;
-                overflow: hidden;
-                position: relative;
-            }
-
-            .preview-item img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
-            .remove-btn {
-                position: absolute;
-                top: 5px;
-                right: 5px;
-                background: rgba(255, 71, 87, 0.9);
+            .submit-btn {
+                background: #333;
                 color: white;
                 border: none;
-                border-radius: 50%;
-                width: 25px;
-                height: 25px;
+                padding: 12px 0;
+                border-radius: 4px;
+                font-size: 16px;
                 cursor: pointer;
+                width: 100%;
+                margin-top: 20px;
             }
 
-            .instructions {
-                background: #e3f2fd;
-                border-left: 4px solid #2196f3;
-                padding: 1rem;
-                margin-bottom: 2rem;
-                border-radius: 4px;
+            .submit-btn:hover {
+                background: #444;
+            }
+
+            .back-btn {
+                display: block;
+                text-align: center;
+                margin-top: 15px;
+                color: #666;
+                text-decoration: none;
+            }
+
+            .back-btn:hover {
+                color: #333;
             }
         </style>
     </th:block>
@@ -105,164 +106,64 @@
 <body>
 <th:block layout:fragment="content">
     <div class="upload-container">
-        <h1 class="text-center mb-4">📸 Загрузка фотографий</h1>
+        <h1 class="upload-title">Загрузка фотографий</h1>
 
-        <div class="instructions">
-            <h5>📋 Инструкция:</h5>
-            <ul class="mb-0">
-                <li>Первая фотография станет вашей главной (аватаркой)</li>
+        <div class="upload-instructions">
+            <p><strong>Инструкция:</strong></p>
+            <ul>
+                <li>Первая фотография станет главной (аватаркой)</li>
                 <li>Рекомендуемый размер: не менее 500x500 пикселей</li>
-                <li>Поддерживаемые форматы: JPG, PNG, GIF</li>
+                <li>Поддерживаемые форматы: JPG, PNG</li>
                 <li>Максимальный размер файла: 5MB</li>
             </ul>
         </div>
 
-        <form action="/photos/postDownload" method="post" enctype="multipart/form-data" id="uploadForm">
-            <!-- Файл 1 (главная) -->
-            <div class="mb-4">
-                <label class="form-label fw-bold">
-                    1. Главная фотография (аватар) *
-                    <span class="badge bg-primary ms-2">Обязательно</span>
-                </label>
-                <div class="upload-area" onclick="document.getElementById('firstPhoto').click()">
-                    <div class="upload-icon">📷</div>
-                    <p>Нажмите или перетащите файл сюда</p>
-                    <small class="text-muted">Первая фотография будет отображаться как ваша главная</small>
-                </div>
-                <input type="file" class="form-control d-none" id="firstPhoto" name="firstPhoto"
-                       accept="image/*" required onchange="previewFile(this, 0)">
-                <div class="file-list" id="fileList1"></div>
+        <form action="/photos/postDownload" method="post" enctype="multipart/form-data">
+            <!-- Фото 1 -->
+            <div class="upload-area" onclick="document.getElementById('firstPhoto').click()">
+                <div class="upload-icon">📷</div>
+                <p>Нажмите, чтобы выбрать первую фотографию (главную)</p>
             </div>
+            <input type="file" class="file-input" id="firstPhoto" name="firstPhoto" accept="image/*" required>
+            <div class="file-list" id="fileList1"></div>
 
-            <!-- Файл 2 -->
-            <div class="mb-4">
-                <label class="form-label fw-bold">
-                    2. Вторая фотография
-                    <span class="badge bg-secondary ms-2">По желанию</span>
-                </label>
-                <div class="upload-area" onclick="document.getElementById('secondPhoto').click()">
-                    <div class="upload-icon">🖼️</div>
-                    <p>Нажмите или перетащите файл сюда</p>
-                </div>
-                <input type="file" class="form-control d-none" id="secondPhoto" name="secondPhoto"
-                       accept="image/*" onchange="previewFile(this, 1)">
-                <div class="file-list" id="fileList2"></div>
+            <!-- Фото 2 -->
+            <div class="upload-area" onclick="document.getElementById('secondPhoto').click()">
+                <div class="upload-icon">🖼️</div>
+                <p>Нажмите, чтобы выбрать вторую фотографию</p>
             </div>
+            <input type="file" class="file-input" id="secondPhoto" name="secondPhoto" accept="image/*" required>
+            <div class="file-list" id="fileList2"></div>
 
-            <!-- Файл 3 -->
-            <div class="mb-4">
-                <label class="form-label fw-bold">
-                    3. Третья фотография
-                    <span class="badge bg-secondary ms-2">По желанию</span>
-                </label>
-                <div class="upload-area" onclick="document.getElementById('thirdPhoto').click()">
-                    <div class="upload-icon">🎨</div>
-                    <p>Нажмите или перетащите файл сюда</p>
-                </div>
-                <input type="file" class="form-control d-none" id="thirdPhoto" name="thirdPhoto"
-                       accept="image/*" onchange="previewFile(this, 2)">
-                <div class="file-list" id="fileList3"></div>
+            <!-- Фото 3 -->
+            <div class="upload-area" onclick="document.getElementById('thirdPhoto').click()">
+                <div class="upload-icon">🎨</div>
+                <p>Нажмите, чтобы выбрать третью фотографию</p>
             </div>
+            <input type="file" class="file-input" id="thirdPhoto" name="thirdPhoto" accept="image/*" required>
+            <div class="file-list" id="fileList3"></div>
 
-            <!-- Превью -->
-            <div class="preview-container" id="previewContainer"></div>
-
-            <!-- Кнопки -->
-            <div class="d-grid gap-2 mt-4">
-                <button type="submit" class="btn btn-primary btn-lg">
-                    📤 Загрузить фотографии
-                </button>
-                <a th:href="@{/profile}" class="btn btn-outline-secondary">
-                    ← Назад в профиль
-                </a>
-            </div>
+            <button type="submit" class="submit-btn">Загрузить фотографии</button>
         </form>
+
+        <a th:href="@{/profile}" class="back-btn">← Назад в профиль</a>
     </div>
 </th:block>
 
 <th:block layout:fragment="scripts">
     <script>
-        const previews = [null, null, null];
-
-        function previewFile(input, index) {
-            const file = input.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previews[index] = e.target.result;
-                updatePreview(index, file.name);
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function updatePreview(index, fileName) {
-            const fileList = document.getElementById(`fileList${index + 1}`);
-            fileList.innerHTML = `
-                <div class="file-item">
-                    <span>📄</span>
-                    <span class="file-name">${fileName}</span>
-                    <button type="button" class="btn btn-sm btn-outline-danger"
-                            onclick="removeFile(${index})">✕</button>
-                </div>
-            `;
-
-            renderPreviews();
-        }
-
-        function removeFile(index) {
-            const input = document.getElementById([`firstPhoto`, `secondPhoto`, `thirdPhoto`][index]);
-            input.value = '';
-            previews[index] = null;
-
-            const fileList = document.getElementById(`fileList${index + 1}`);
-            fileList.innerHTML = '';
-
-            renderPreviews();
-        }
-
-        function renderPreviews() {
-            const container = document.getElementById('previewContainer');
-            container.innerHTML = '';
-
-            previews.forEach((preview, index) => {
-                if (preview) {
-                    const previewItem = document.createElement('div');
-                    previewItem.className = 'preview-item';
-                    previewItem.innerHTML = `
-                        <img src="${preview}" alt="Preview ${index + 1}">
-                        <button type="button" class="remove-btn" onclick="removeFile(${index})">✕</button>
+        // Обновляем отображение выбранных файлов
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', function() {
+                const fileList = document.getElementById('fileList' + this.id.replace('firstPhoto', '1').replace('secondPhoto', '2').replace('thirdPhoto', '3'));
+                if (this.files.length > 0) {
+                    const file = this.files[0];
+                    fileList.innerHTML = `
+                        <div class="file-item">
+                            <span>📄 ${file.name}</span>
+                            <span>${(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                        </div>
                     `;
-                    container.appendChild(previewItem);
-                }
-            });
-        }
-
-        // Drag and drop
-        document.querySelectorAll('.upload-area').forEach(area => {
-            area.addEventListener('dragover', e => {
-                e.preventDefault();
-                area.style.backgroundColor = 'rgba(102, 126, 234, 0.1)';
-            });
-
-            area.addEventListener('dragleave', () => {
-                area.style.backgroundColor = '';
-            });
-
-            area.addEventListener('drop', e => {
-                e.preventDefault();
-                area.style.backgroundColor = '';
-
-                const file = e.dataTransfer.files[0];
-                if (file && file.type.startsWith('image/')) {
-                    const input = area.nextElementSibling;
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(file);
-                    input.files = dataTransfer.files;
-
-                    // Определяем индекс
-                    const index = Array.from(document.querySelectorAll('.upload-area')).indexOf(area);
-                    previewFile(input, index);
                 }
             });
         });

@@ -4,14 +4,36 @@
       layout:decorate="~{layouts/base}">
 <head>
   <title>Мэтчи</title>
+
+  <th:block layout:fragment="styles">
+    <style>
+      .page-title {
+          margin-bottom: 20px;
+          font-size: 24px;
+      }
+
+      .empty-state {
+          text-align: center;
+          padding: 60px 20px;
+          color: #666;
+      }
+
+      .empty-icon {
+          font-size: 48px;
+          margin-bottom: 20px;
+          opacity: 0.3;
+      }
+    </style>
+  </th:block>
 </head>
 <body>
 <th:block layout:fragment="content">
-  <div class="text-center py-5">
-    <div style="font-size: 5rem;">🤝</div>
-    <h1 class="mt-4">Страница "Мэтчи" в разработке</h1>
-    <p class="lead text-muted">Здесь будут ваши взаимные симпатии</p>
-    <a th:href="@{/main}" class="btn btn-primary mt-3">← На главную</a>
+  <h1 class="page-title">Мэтчи</h1>
+
+  <div class="empty-state">
+    <div class="empty-icon">🤝</div>
+    <h3>Пока нет мэтчей</h3>
+    <p>Когда у вас появятся взаимные симпатии, они отобразятся здесь</p>
   </div>
 </th:block>
 </body>

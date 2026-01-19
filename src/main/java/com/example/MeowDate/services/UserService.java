@@ -9,7 +9,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -37,5 +40,12 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void save(User user) {
         userRepository.save(user);
+    }
+
+    public List<User> getOtherUsers(String currentUsername) {
+        List<User> allUsers = userRepository.findAll();
+        return allUsers.stream()
+                .filter(user -> !user.getUsername().equals(currentUsername))
+                .collect(Collectors.toList());
     }
 }

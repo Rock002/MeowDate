@@ -1,51 +1,65 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <!-- Этот файл может содержать только фрагменты -->
+  <meta charset="UTF-8">
 </head>
 <body>
-<!-- Фрагмент навигационной панели -->
-<div th:fragment="navbar">
-  <nav class="navbar">
-    <div class="nav-container">
-      <a th:href="@{/main}" class="nav-logo">MeowDate</a>
+<!-- Минималистичная навигационная панель -->
+<nav th:fragment="navbar">
+  <div class="navbar-minimal">
+    <a th:href="@{/}" class="nav-link">Анкеты</a>
+    <a th:href="@{/likes}" class="nav-link">Лайки</a>
+    <a th:href="@{/matches}" class="nav-link">Мэтчи</a>
+    <a th:href="@{/chats}" class="nav-link">Чаты</a>
+    <a th:href="@{/profile}" class="nav-link">Профиль</a>
+    <form th:action="@{/logout}" method="post" class="logout-form">
+      <button type="submit" class="logout-btn">Выйти</button>
+    </form>
+  </div>
+</nav>
 
-      <div class="nav-menu">
-        <ul class="nav-list">
-          <li class="nav-item">
-            <a th:href="@{/main}" class="nav-link" th:classappend="${#httpServletRequest.requestURI == '/main' ? 'active' : ''}">
-              Анкеты
-            </a>
-          </li>
-          <li class="nav-item">
-            <a th:href="@{/likes}" class="nav-link" th:classappend="${#httpServletRequest.requestURI.startsWith('/likes') ? 'active' : ''}">
-              Лайки
-            </a>
-          </li>
-          <li class="nav-item">
-            <a th:href="@{/matches}" class="nav-link" th:classappend="${#httpServletRequest.requestURI.startsWith('/matches') ? 'active' : ''}">
-              Мэтчи
-            </a>
-          </li>
-          <li class="nav-item">
-            <a th:href="@{/chats}" class="nav-link" th:classappend="${#httpServletRequest.requestURI.startsWith('/chats') ? 'active' : ''}">
-              Чаты
-            </a>
-          </li>
-          <li class="nav-item">
-            <a th:href="@{/profile}" class="nav-link" th:classappend="${#httpServletRequest.requestURI == '/profile' ? 'active' : ''}">
-              Профиль
-            </a>
-          </li>
-        </ul>
+<style>
+  .navbar-minimal {
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 10px 20px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+  }
 
-        <!-- Выход из системы -->
-        <form th:action="@{/logout}" method="post" class="logout-form">
-          <button type="submit" class="logout-btn">Выйти</button>
-        </form>
-      </div>
-    </div>
-  </nav>
-</div>
+  .nav-link {
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
+      padding: 5px 0;
+      position: relative;
+  }
+
+  .nav-link:hover {
+      color: #666;
+  }
+
+  .logout-form {
+      margin-left: auto;
+  }
+
+  .logout-btn {
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      color: #666;
+      padding: 5px 15px;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+  }
+
+  .logout-btn:hover {
+      background: #e0e0e0;
+  }
+</style>
 </body>
 </html>

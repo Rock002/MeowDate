@@ -8,241 +8,133 @@
     <th:block layout:fragment="styles">
         <style>
             .profile-header {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                padding: 2rem;
-                border-radius: 10px;
-                margin-bottom: 2rem;
-                position: relative;
+                margin-bottom: 30px;
             }
 
-            .avatar-container {
-                position: relative;
-                width: 150px;
-                height: 150px;
-                margin: 0 auto;
+            .profile-name {
+                font-size: 28px;
+                margin-bottom: 10px;
             }
 
-            .avatar {
-                width: 100%;
-                height: 100%;
-                border-radius: 50%;
-                object-fit: cover;
-                border: 5px solid white;
+            .profile-details {
+                color: #666;
+                font-size: 16px;
+                margin-bottom: 20px;
             }
 
-            .photo-grid {
+            .profile-details span {
+                display: inline-block;
+                margin-right: 15px;
+            }
+
+            .photos-section {
+                margin-top: 40px;
+            }
+
+            .section-title {
+                font-size: 20px;
+                margin-bottom: 15px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .photos-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                gap: 1.5rem;
-                margin-top: 2rem;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
             }
 
-            .photo-card {
-                position: relative;
-                border-radius: 10px;
-                overflow: hidden;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                transition: transform 0.3s;
-            }
-
-            .photo-card:hover {
-                transform: translateY(-5px);
-            }
-
-            .photo-card img {
+            .photo-item {
                 width: 100%;
-                height: 250px;
+                height: 200px;
                 object-fit: cover;
-            }
-
-            .photo-overlay {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background: rgba(0,0,0,0.7);
-                color: white;
-                padding: 0.5rem;
-                text-align: center;
-            }
-
-            .general-badge {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                background: #28a745;
-                color: white;
-                padding: 5px 10px;
-                border-radius: 20px;
-                font-size: 12px;
+                border-radius: 8px;
+                background: #f5f5f5;
             }
 
             .edit-btn {
-                position: absolute;
-                top: 20px;
-                right: 20px;
+                background: #333;
+                color: white;
+                border: none;
+                padding: 8px 20px;
+                border-radius: 4px;
+                font-size: 14px;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-block;
             }
 
-            .info-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1rem;
-                margin-top: 2rem;
+            .empty-photos {
+                text-align: center;
+                padding: 40px 20px;
+                color: #666;
             }
 
-            .info-card {
-                background: white;
-                padding: 1.5rem;
-                border-radius: 8px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            .empty-icon {
+                font-size: 48px;
+                margin-bottom: 15px;
+                opacity: 0.3;
             }
         </style>
     </th:block>
 </head>
 <body>
 <th:block layout:fragment="content">
-    <!-- Шапка профиля -->
     <div class="profile-header">
-        <div class="row align-items-center">
-            <div class="col-md-3 text-center">
-                <div class="avatar-container">
-                    <!-- Главная фотография -->
-                    <div th:if="${generalPhoto != null}">
-                        <img th:src="${generalPhoto.shortFileName}"
-                             alt="Аватар"
-                             class="avatar">
-                        <div class="general-badge">Главная</div>
-                    </div>
-                    <div th:unless="${generalPhoto != null}">
-                        <div class="avatar bg-light d-flex align-items-center justify-content-center">
-                            <span style="font-size: 3rem;">👤</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-9">
-                <h1 th:text="${user.username}">Имя пользователя</h1>
-                <p class="lead" th:if="${user.userProfile != null && user.userProfile.info != null}"
-                   th:text="${user.userProfile.info}">
-                    Информация о пользователе
-                </p>
+        <h1 class="profile-name" th:text="${user.username}"></h1>
 
-                <a th:href="@{/profile/edit}" class="btn btn-light edit-btn">
-                    ✏️ Редактировать
-                </a>
-            </div>
+        <div class="profile-details">
+                <span th:if="${user.userProfile != null && user.userProfile.sex != null}">
+                    <strong>Пол:</strong>
+                    <span th:text="${user.userProfile.sex == 'M' ? 'Мужской' : 'Женский'}"></span>
+                </span>
+
+            <span th:if="${user.userProfile != null && user.userProfile.birthDate != null}">
+                    <strong>Дата рождения:</strong>
+                    <span th:text="${user.userProfile.birthDate}"></span>
+                </span>
+
+            <span th:if="${user.userProfile != null && user.userProfile.location != null}">
+                    <strong>Место:</strong>
+                    <span th:text="${user.userProfile.location}"></span>
+                </span>
         </div>
+
+        <a th:href="@{/profile/edit}" class="edit-btn">Редактировать профиль</a>
     </div>
 
-    <!-- Основная информация -->
-    <div class="row">
-        <div class="col-md-4">
-            <div class="info-card">
-                <h5>Личная информация</h5>
-                <ul class="list-unstyled">
-                    <li><strong>Имя:</strong> <span th:text="${user.userProfile != null ? user.userProfile.firstName : 'Не указано'}"></span></li>
-<!--                    <li><strong>Возраст:</strong> <span th:text="${user.userProfile != null ? user.userProfile.age : 'Не указан'}"></span></li>-->
-                    <li><strong>Пол:</strong> <span th:text="${user.userProfile != null ? (user.userProfile.sex == 'M' ? 'Мужской' : 'Женский') : 'Не указан'}"></span></li>
-                    <li><strong>Email:</strong> <span th:text="${user.email}"></span></li>
-                </ul>
+    <!-- Биография -->
+    <div th:if="${user.userProfile != null && user.userProfile.info != null}">
+        <h3>О себе</h3>
+        <p th:text="${user.userProfile.info}" style="line-height: 1.6; color: #555;"></p>
+    </div>
+
+    <!-- Фотографии -->
+    <div class="photos-section">
+        <div class="section-title">
+            <h3>Фотографии</h3>
+            <a th:href="@{/photos/download}" class="edit-btn">+ Добавить фото</a>
+        </div>
+
+        <div th:if="${photos != null && !photos.isEmpty()}">
+            <div class="photos-grid">
+                <div th:each="photo, iterStat : ${photos}">
+                    <img th:src="${base64Images[iterStat.index]}"
+                         th:alt="${photo.originFileName}"
+                         class="photo-item">
+                </div>
             </div>
         </div>
 
-        <div class="col-md-8">
-            <!-- Галерея фотографий -->
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Мои фотографии</h5>
-                    <a th:href="@{/photos/download}" class="btn btn-sm btn-primary">
-                        + Добавить фото
-                    </a>
-                </div>
-                <div class="card-body">
-                    <div th:if="${photos.isEmpty()}">
-                        <div class="text-center py-5">
-                            <div style="font-size: 3rem; opacity: 0.5;">📷</div>
-                            <p class="text-muted mt-3">У вас пока нет фотографий</p>
-                            <a th:href="@{/photos/download}" class="btn btn-primary mt-2">
-                                Загрузить первую фотографию
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="photo-grid" th:unless="${photos.isEmpty()}">
-                        <div class="photo-card" th:each="photo, iterStat : ${photos}">
-                            <img th:src="${base64Images[iterStat.index]}"
-                                 th:alt="${photo.originFileName}">
-
-                            <div class="photo-overlay">
-                                <small th:text="${photo.originFileName}"></small>
-                            </div>
-
-                            <div class="general-badge" th:if="${photo.generalPhoto}">
-                                Главная
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Статистика -->
-            <div class="row mt-3">
-                <div class="col-md-4">
-                    <div class="info-card text-center">
-                        <div style="font-size: 2rem;">❤️</div>
-                        <h4 th:text="${likesCount != null ? likesCount : 0}">0</h4>
-                        <p class="text-muted">Лайков</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="info-card text-center">
-                        <div style="font-size: 2rem;">🤝</div>
-                        <h4 th:text="${matchesCount != null ? matchesCount : 0}">0</h4>
-                        <p class="text-muted">Мэтчей</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="info-card text-center">
-                        <div style="font-size: 2rem;">💬</div>
-                        <h4 th:text="${chatsCount != null ? chatsCount : 0}">0</h4>
-                        <p class="text-muted">Чатов</p>
-                    </div>
-                </div>
-            </div>
+        <div th:if="${photos == null || photos.isEmpty()}" class="empty-photos">
+            <div class="empty-icon">📷</div>
+            <p>У вас пока нет фотографий</p>
+            <a th:href="@{/photos/download}" class="edit-btn" style="margin-top: 15px;">
+                Загрузить фотографии
+            </a>
         </div>
     </div>
 </th:block>
-
-<!--<th:block layout:fragment="scripts">-->
-<!--    <script>-->
-<!--        // Скрипт для подтверждения удаления фотографии-->
-<!--        function confirmDelete(photoId) {-->
-<!--            if (confirm('Вы уверены, что хотите удалить эту фотографию?')) {-->
-<!--                fetch('/photos/' + photoId, {-->
-<!--                    method: 'DELETE',-->
-<!--                    headers: {-->
-<!--                        'Content-Type': 'application/json'-->
-<!--                    }-->
-<!--                }).then(response => {-->
-<!--                    if (response.ok) {-->
-<!--                        location.reload();-->
-<!--                    }-->
-<!--                });-->
-<!--            }-->
-<!--        }-->
-<!--        -->
-<!--        // Скрипт для установки главной фотографии-->
-<!--        function setAsMain(photoId) {-->
-<!--            fetch('/photos/' + photoId + '/set-main', {-->
-<!--                method: 'POST'-->
-<!--            }).then(response => {-->
-<!--                if (response.ok) {-->
-<!--                    location.reload();-->
-<!--                }-->
-<!--            });-->
-<!--        }-->
-<!--    </script>-->
-<!--</th:block>-->
 </body>
 </html>
