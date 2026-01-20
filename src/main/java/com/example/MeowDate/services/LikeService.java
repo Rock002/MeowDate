@@ -18,4 +18,8 @@ public class LikeService {
     public List<Like> findByReceiver(User receiver) {
         return likeRepository.findByReceiver(receiver);
     }
+
+    public void save(Like like) {
+        likeRepository.save(like);
+    }
 }

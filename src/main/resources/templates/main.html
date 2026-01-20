@@ -180,7 +180,7 @@
 <th:block layout:fragment="scripts">
     <script>
         function likeProfile(profileId) {
-            fetch('/api/like/' + profileId, {
+            fetch('/like/' + profileId, {
                 method: 'POST'
             }).then(response => {
                 if (response.ok) {

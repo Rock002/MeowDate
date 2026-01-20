@@ -25,6 +25,14 @@ public class Like {
     @Column(name = "dateOfLike")
     private LocalDate dateOfLike;
 
+    public Like() {}
+
+    public Like(User sender, User receiver) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.dateOfLike = LocalDate.now();
+    }
+
     public Long getId() {
         return id;
     }
