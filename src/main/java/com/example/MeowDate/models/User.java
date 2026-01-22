@@ -5,9 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -27,7 +25,6 @@ public class User {
     @Column(name = "password")
     private String password;
 
-//    @NotNull
     @Email
     @Column(name = "email")
     private String email;

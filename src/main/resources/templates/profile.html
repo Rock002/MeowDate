@@ -87,7 +87,7 @@
         <div class="profile-details">
                 <span th:if="${user.userProfile != null && user.userProfile.sex != null}">
                     <strong>Пол:</strong>
-                    <span th:text="${user.userProfile.sex == 'M' ? 'Мужской' : 'Женский'}"></span>
+                    <span th:text="${user.userProfile.sex}"></span>
                 </span>
 
             <span th:if="${user.userProfile != null && user.userProfile.birthDate != null}">

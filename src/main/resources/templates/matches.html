@@ -275,11 +275,11 @@
 
               <div class="match-details">
                                     <span th:if="${otherUser.userProfile != null && otherUser.userProfile.sex != null}">
-                                        <span th:text="${otherUser.userProfile.sex == 'M' ? '♂ Мужчина' : '♀ Женщина'}"></span>
+                                        <span th:text="${otherUser.userProfile.sex}"></span>
                                     </span>
 
                 <span th:if="${otherUser.userProfile != null && otherUser.userProfile.birthDate != null}">
-                                        <span th:text="${#temporals.year(#temporals.createNow()) - #temporals.year(otherUser.userProfile.birthDate)}"></span> лет
+                                        Возраст: <span th:text="${#temporals.year(#temporals.createNow()) - #temporals.year(otherUser.userProfile.birthDate)}"></span>
                                     </span>
 
                 <span th:if="${otherUser.userProfile != null && otherUser.userProfile.location != null}">

@@ -2,6 +2,8 @@ package com.example.MeowDate.services;
 
 import com.example.MeowDate.config.MyUserDetails;
 import com.example.MeowDate.models.User;
+import com.example.MeowDate.models.UserProfile;
+import com.example.MeowDate.repository.UserProfileRepository;
 import com.example.MeowDate.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,7 +11,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,9 +18,11 @@ import java.util.stream.Collectors;
 @Service
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final UserProfileRepository userProfileRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserProfileRepository userProfileRepository) {
         this.userRepository = userRepository;
+        this.userProfileRepository = userProfileRepository;
     }
 
     @Transactional
@@ -52,5 +55,17 @@ public class UserService implements UserDetailsService {
     public User findById(Long id) {
         return userRepository.findById(id)
                 .orElse(null);
+    }
+
+    @Transactional
+    public void update(UserProfile userProfile) {
+        userProfileRepository.update(
+                userProfile.getUser(),
+                userProfile.getFirstName(),
+                userProfile.getBirthDate(),
+                userProfile.getSex(),
+                userProfile.getLocation(),
+                userProfile.getInfo()
+        );
     }
 }

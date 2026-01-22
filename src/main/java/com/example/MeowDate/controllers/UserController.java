@@ -12,10 +12,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
+import java.time.LocalDate;
+
 
 @Controller
 public class UserController {
@@ -71,5 +71,42 @@ public class UserController {
         userProfileService.save(userProfile);
 
         return "redirect:/login";
+    }
+
+    @GetMapping("/profile/edit")
+    public String profileEdit(Authentication authentication, Model model) {
+        String username = authentication.getName();
+        User currentUser = userService.findByUsername(username);
+
+        model.addAttribute("user", currentUser);
+        return "profileEdit";
+    }
+
+    @PostMapping("/profile/update-info")
+    public String postProfileInfoEdit(@RequestParam("firstName") String firstName,
+                                  @RequestParam("sex") char sex,
+                                  @RequestParam("birthDate") LocalDate birthDate,
+                                  @RequestParam("location") String location,
+                                  @RequestParam("info") String info,
+                                  Authentication authentication
+    ) {
+        String username = authentication.getName();
+        User currentUser = userService.findByUsername(username);
+
+        UserProfile userProfile = currentUser.getUserProfile();
+
+        if (userProfile == null) {
+            userProfile = new UserProfile();
+            userProfile.setUser(currentUser);
+        }
+
+        userProfile.setFirstName(firstName);
+        userProfile.setSex(sex);
+        userProfile.setBirthDate(birthDate);
+        userProfile.setLocation(location);
+        userProfile.setInfo(info);
+
+        userService.update(userProfile);
+        return "redirect:/profile";
     }
 }
