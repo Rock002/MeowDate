@@ -176,11 +176,8 @@
     </style>
 </head>
 <body>
-<!-- Панель отладки (скрыта по умолчанию) -->
-<div class="debug-panel" id="debugPanel" style="display: none;">
-    <div id="debugLog"></div>
-</div>
 
+<!-- HTML структура остается -->
 <div class="chat-header">
     <a th:href="@{/matches}" class="back-btn">←</a>
     <div class="user-avatar">
@@ -196,7 +193,22 @@
 
 <div class="chat-container">
     <div class="messages-container" id="messagesContainer">
-        <!-- Сообщения будут появляться здесь -->
+        <!-- ✅ Отображаем историю сообщений с помощью Thymeleaf -->
+        <div th:each="message : ${chatHistory}">
+            <script th:inline="javascript">
+                /*<![CDATA[*/
+                document.addEventListener('DOMContentLoaded', function() {
+                    displayHistoryMessage({
+                        senderId: [[${message.senderId}]],
+                        receiverId: [[${message.receiverId}]],
+                        content: /*[[${message.content}]]*/ '',
+                        senderName: /*[[${message.senderName}]]*/ '',
+                        timestamp: /*[[${message.timestamp}]]*/ ''
+                    }, [[${currentUserId}]]);
+                });
+                /*]]>*/
+            </script>
+        </div>
     </div>
 
     <div class="input-container">
@@ -209,10 +221,6 @@
     </div>
 </div>
 
-<div style="position: fixed; top: 10px; right: 10px;">
-    <button onclick="toggleDebug()" style="padding: 5px 10px; font-size: 12px;">Отладка</button>
-</div>
-
 <!-- WebSocket библиотеки -->
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
@@ -223,150 +231,54 @@
     const currentUserId = /*[[${currentUserId}]]*/ null;
     const currentUsername = /*[[${currentUsername}]]*/ 'Вы';
     const otherUserId = /*[[${otherUserId}]]*/ null;
-    const otherUsername = /*[[${otherUsername}]]*/ 'Собеседник';
-
-    // Функции для отладки
-    function debugLog(message, type = 'info') {
-        const debugLog = document.getElementById('debugLog');
-        const time = new Date().toLocaleTimeString();
-        const logEntry = document.createElement('div');
-        logEntry.className = `debug-${type}`;
-        logEntry.textContent = `[${time}] ${message}`;
-        debugLog.appendChild(logEntry);
-        debugLog.scrollTop = debugLog.scrollHeight;
-        console.log(`[${type.toUpperCase()}] ${message}`);
-    }
-
-    function toggleDebug() {
-        const panel = document.getElementById('debugPanel');
-        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-    }
     /*]]>*/
 </script>
 
 <script>
-    debugLog(`Инициализация чата: Текущий пользователь: ${currentUsername} (ID: ${currentUserId})`, 'info');
-    debugLog(`Собеседник: ${otherUsername} (ID: ${otherUserId})`, 'info');
-
-    // Подключение к WebSocket
-    function connect() {
-        debugLog('Попытка подключения к WebSocket через /ws...', 'info');
-
-        const socket = new SockJS('/ws');
-        stompClient = Stomp.over(socket);
-
-        // Включим отладку STOMP
-        stompClient.debug = function(str) {
-            debugLog(`STOMP: ${str}`, 'info');
-        };
-
-        stompClient.connect({}, function(frame) {
-            debugLog('✅ Успешно подключено к WebSocket!', 'success');
-            debugLog(`Детали подключения: ${JSON.stringify(frame.headers)}`, 'info');
-
-            // Обновляем статус
-            document.getElementById('statusText').textContent = '✅ Подключено';
-            document.getElementById('connectionStatus').className = 'status connected';
-
-            const myChannel = '/queue/messages.' + currentUserId;
-            console.log('Подписываюсь на канал:', myChannel);
-
-            // Подписываемся на приватные сообщения
-            stompClient.subscribe(myChannel, function(message) {
-                debugLog(`📨 Получено сырое сообщение: ${message.body}`, 'info');
-
-                try {
-                    const msg = JSON.parse(message.body);
-                    debugLog(`Распарсено: senderId=${msg.senderId}, receiverId=${msg.receiverId}, content="${msg.content}"`, 'info');
-                    displayMessage(msg);
-                } catch (e) {
-                    debugLog(`❌ Ошибка парсинга JSON: ${e.message}`, 'error');
-                    debugLog(`Содержимое: ${message.body}`, 'error');
-                }
-            });
-
-            debugLog('Подписка на /user/queue/messages активирована', 'success');
-
-            // Отправим тестовое сообщение
-            setTimeout(() => {
-                sendTestMessage();
-            }, 1000);
-
-        }, function(error) {
-            debugLog(`❌ Ошибка подключения WebSocket: ${error}`, 'error');
-            document.getElementById('statusText').textContent = '❌ Ошибка подключения';
-            document.getElementById('connectionStatus').className = 'status disconnected';
-
-            // Пытаемся переподключиться через 5 секунд
-            setTimeout(connect, 5000);
-        });
-    }
-
-    // Отправка тестового сообщения
-    function sendTestMessage() {
-        if (!stompClient || !stompClient.connected) {
-            debugLog('Не подключено, пропускаем тестовое сообщение', 'warning');
-            return;
-        }
-
-        const testMessage = {
-            senderId: currentUserId,
-            receiverId: otherUserId,
-            senderName: currentUsername,
-            content: 'Тестовое сообщение при подключении',
-            timestamp: new Date().toISOString()
-        };
-
-        debugLog(`Отправка тестового сообщения: ${JSON.stringify(testMessage)}`, 'info');
-        stompClient.send('/app/chat.send', {}, JSON.stringify(testMessage));
-    }
-
-    // Отправка сообщения
-    function sendMessage() {
-        if (!stompClient || !stompClient.connected) {
-            alert('Сначала подключитесь к чату!');
-            return;
-        }
-
-        const input = document.getElementById('messageInput');
-        const content = input.value.trim();
-        const receiverId = input.getAttribute('data-receiver-id');
-
-        if (!content) {
-            return;
-        }
-
-        const message = {
-            senderId: parseInt(currentUserId),
-            receiverId: parseInt(receiverId),
-            senderName: currentUsername,
-            content: content,
-            timestamp: new Date().toISOString()
-        };
-
-        debugLog(`Отправка сообщения: ${JSON.stringify(message)}`, 'info');
-
-        // Отправляем сообщение на сервер
-        stompClient.send('/app/chat.send', {}, JSON.stringify(message));
-
-        // Очищаем поле ввода
-        input.value = '';
-
-        // Фокус на поле ввода
-        input.focus();
-    }
-
-    // Отображение сообщения
-    function displayMessage(message) {
-        debugLog(`Отображение сообщения: senderId=${message.senderId}, content="${message.content}"`, 'info');
-
+    // ✅ Функция для отображения сообщений из истории
+    function displayHistoryMessage(message, currentUserId) {
         const messagesContainer = document.getElementById('messagesContainer');
         const messageDiv = document.createElement('div');
 
         const isSent = parseInt(message.senderId) === parseInt(currentUserId);
+        messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
 
-        debugLog(`isSent = ${isSent} (message.senderId=${message.senderId}, currentUserId=${currentUserId})`, 'info');
+        // Преобразуем строку timestamp в Date
+        let time;
+        try {
+            const timestamp = message.timestamp;
+            // Если timestamp в формате массива [год, месяц, день, час, минута, секунда]
+            if (Array.isArray(timestamp)) {
+                time = new Date(timestamp[0], timestamp[1]-1, timestamp[2],
+                               timestamp[3], timestamp[4], timestamp[5]).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } else {
+                // Если это строка
+                time = new Date(message.timestamp).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+        } catch (e) {
+            time = '--:--';
+        }
 
+        messageDiv.innerHTML = `
+            <div class="message-content">${escapeHtml(message.content)}</div>
+            <div class="message-time">${time} • ${escapeHtml(message.senderName)}</div>
+        `;
+
+        messagesContainer.appendChild(messageDiv);
+    }
+
+    // ✅ Функция для отображения новых сообщений (из WebSocket)
+    function displayMessage(message) {
+        const messagesContainer = document.getElementById('messagesContainer');
+        const messageDiv = document.createElement('div');
+
+        const isSent = parseInt(message.senderId) === parseInt(currentUserId);
         messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
 
         let time;
@@ -384,15 +296,11 @@
 
         messageDiv.innerHTML = `
             <div class="message-content">${escapeHtml(message.content)}</div>
-            <div class="message-time">${time} от ${escapeHtml(message.senderName || 'Неизвестный')}</div>
+            <div class="message-time">${time} • ${escapeHtml(message.senderName)}</div>
         `;
 
         messagesContainer.appendChild(messageDiv);
-
-        // Прокручиваем вниз
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-        debugLog('Сообщение отображено в чате', 'success');
     }
 
     // Функция для экранирования HTML
@@ -402,7 +310,61 @@
         return div.innerHTML;
     }
 
-    // Отправка сообщения по нажатию Enter
+    // Подключение к WebSocket
+    function connect() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function(frame) {
+            console.log('✅ Подключено к WebSocket');
+            document.getElementById('statusText').textContent = '✅ Подключено';
+
+            // Подписываемся на свой канал сообщений
+            stompClient.subscribe('/queue/messages.' + currentUserId, function(message) {
+                console.log('Получено сообщение:', message.body);
+                const msg = JSON.parse(message.body);
+                displayMessage(msg);
+
+                // Прокручиваем вниз
+                const messagesContainer = document.getElementById('messagesContainer');
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            });
+
+        }, function(error) {
+            console.error('❌ Ошибка подключения:', error);
+            document.getElementById('statusText').textContent = '❌ Ошибка подключения';
+            setTimeout(connect, 5000);
+        });
+    }
+
+    // Отправка сообщения
+    function sendMessage() {
+        if (!stompClient || !stompClient.connected) {
+            alert('Сначала подключитесь к чату!');
+            return;
+        }
+
+        const input = document.getElementById('messageInput');
+        const content = input.value.trim();
+
+        if (!content) return;
+
+        const message = {
+            senderId: currentUserId,
+            receiverId: otherUserId,
+            senderName: currentUsername,
+            content: content
+        };
+
+        // Отправляем на сервер
+        stompClient.send('/app/chat.send', {}, JSON.stringify(message));
+
+        // Очищаем поле ввода
+        input.value = '';
+        input.focus();
+    }
+
+    // Отправка по Enter
     document.getElementById('messageInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             sendMessage();
@@ -411,32 +373,17 @@
 
     // Подключаемся при загрузке страницы
     document.addEventListener('DOMContentLoaded', function() {
-        debugLog('Страница загружена, начинаем подключение...', 'info');
+        // Прокручиваем вниз для показа истории
+        setTimeout(() => {
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }, 100);
+
+        // Подключаем WebSocket
         connect();
 
         // Фокус на поле ввода
         document.getElementById('messageInput').focus();
-
-        // Тестовое сообщение для проверки отображения
-        setTimeout(() => {
-            const testMessage = {
-                senderId: currentUserId,
-                receiverId: otherUserId,
-                senderName: currentUsername,
-                content: 'Тестовое сообщение (локальное)',
-                timestamp: new Date().toISOString()
-            };
-            displayMessage(testMessage);
-            debugLog('Тестовое сообщение добавлено локально', 'info');
-        }, 500);
-    });
-
-    // Обработка закрытия страницы
-    window.addEventListener('beforeunload', function() {
-        if (stompClient) {
-            stompClient.disconnect();
-            debugLog('WebSocket соединение закрыто', 'info');
-        }
     });
 </script>
 </body>

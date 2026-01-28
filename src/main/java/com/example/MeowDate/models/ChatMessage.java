@@ -13,19 +13,35 @@ public class ChatMessage {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(name = "senderId")
+
+    @Column(name = "sender_id")
     private Long senderId;
-    @Column(name = "receiverId")
+
+    @Column(name = "receiver_id")
     private Long receiverId;
-    @Column(name = "senderName")
+
+    @Column(name = "sender_name")
     private String senderName;
+
     @Column(name = "content")
     private String content;
+
     @Column(name = "timestamp")
     private LocalDateTime timestamp;
 
+    @Column(name = "is_read", nullable = false)
+    private boolean isRead = false;
+
+    public ChatMessage(Long senderId, Long receiverId, String senderName, String content) {
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.senderName = senderName;
+        this.content = content;
+        this.timestamp = LocalDateTime.now();
+    }
+
     public ChatMessage() {
-        timestamp = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now();
     }
 
     public Long getId() {
